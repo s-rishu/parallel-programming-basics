@@ -34,7 +34,7 @@ int main(int argc, char** argv){
     //get input arguments
     int x = atoi(argv[1]);
     int t = atoi(argv[2]);
-    int input_file_path = atoi(argv[3]);
+    char* input_file_path = argv[3];
 
     //initialize 2d matrix for weights
     int weights[12][12];
@@ -43,17 +43,18 @@ int main(int argc, char** argv){
     FILE *input;  
     size_t count;
     char *line = malloc(100);
-    int i = 0;
-    int j = 0;
+    int i;
+    int j;
+    char *token;
     input = fopen(input_file_path, "r"); 
     // TODO: parallelize if possible
     for(i = 0; i<x; i++) {
-        getline(&line, &count, input)
-        for (; count > 0; count--, j++)
-            sscanf(line, "%d", &input[i][j]);
+        getline(&line, &count, input);
+        for (j = 0; j<x; j++)
+            weights[i][j] = strtol(line, &token, 10);
+            line = token;
             //debug
-            printf("%d ", input[i][j])
-        i++;
+            //printf("%d ", weights[i][j]);
     }
 
 
