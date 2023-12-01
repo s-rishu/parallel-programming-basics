@@ -8,13 +8,12 @@ int opt_path[12];
 int weights[12][12];
 int x = 0;
 
-void permutate(int height, int opt_weight_local, int opt_path_local[]){
+void permutate(int height, int opt_weight_local, int* opt_weight_lmin, int opt_path_local[], int opt_path_lmin[]){
      if(height == 0){ //end of a single permutation
-        #pragma omp critical
-        if(opt_weight_local < opt_weight){
-            opt_weight = opt_weight_local;
+        if(opt_weight_local < *opt_weight_lmin){
+            *opt_weight_lmin = opt_weight_local;
             for(int k = 0; k < x; k++){
-                opt_path[k] = opt_path_local[k];
+                opt_path_lmin[k] = opt_path_local[k];
             }
         }
         return;
@@ -27,7 +26,7 @@ void permutate(int height, int opt_weight_local, int opt_path_local[]){
         opt_path_local[i] = opt_path_local[height -1];
         opt_path_local[height -1] = temp;
        
-        permutate(height-1, opt_weight_local +  weights[opt_path_local[height]][opt_path_local[height-1]], opt_path_local);
+        permutate(height-1, opt_weight_local +  weights[opt_path_local[height]][opt_path_local[height-1]], opt_weight_lmin, opt_path_local, opt_path_lmin);
 
         //swap back ith element and buffer height - 1th element
         temp = opt_path_local[i];
@@ -68,6 +67,10 @@ int main(int argc, char** argv){
     #pragma omp parallel for num_threads(t)
     for(i = 0; i < x-1; i++) {
         int opt_path_local[12];
+
+        int opt_path_lmin[12];
+        int opt_weight_lmin = INT_MAX;
+
         //initialize opt_path_local
         for(int k = 0; k <x; k++){
                 opt_path_local[x-k-1]  = k;
@@ -76,7 +79,16 @@ int main(int argc, char** argv){
         int temp = opt_path_local[i];
         opt_path_local[i] = opt_path_local[x - 2];
         opt_path_local[x - 2] = temp;
-        permutate(x-2, weights[0][temp], opt_path_local);
+
+        permutate(x-2, weights[0][temp], &opt_weight_lmin, opt_path_local, opt_path_lmin);
+
+        #pragma omp critical
+        if(opt_weight_lmin < opt_weight){
+            opt_weight = opt_weight_lmin;
+            for(int k = 0; k < x; k++){
+                opt_path[k] = opt_path_lmin[k];
+            }
+        }
     }
 
     // print result
