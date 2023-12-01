@@ -10,6 +10,7 @@ int x = 0;
 
 void permutate(int height, int opt_weight_local, int* opt_weight_lmin, int opt_path_local[], int opt_path_lmin[]){
      if(height == 0){ //end of a single permutation
+        //update local optimal results
         if(opt_weight_local < *opt_weight_lmin){
             *opt_weight_lmin = opt_weight_local;
             for(int k = 0; k < x; k++){
@@ -68,13 +69,15 @@ int main(int argc, char** argv){
     for(i = 0; i < x-1; i++) {
         int opt_path_local[12];
 
-        int opt_path_lmin[12];
-        int opt_weight_lmin = INT_MAX;
+        //store thread local optimal path and distance
+        int opt_path_lmin[12]; 
+        int opt_weight_lmin = INT_MAX; 
 
         //initialize opt_path_local
         for(int k = 0; k <x; k++){
                 opt_path_local[x-k-1]  = k;
         }       
+        
         //swap x-2th element and ith element
         int temp = opt_path_local[i];
         opt_path_local[i] = opt_path_local[x - 2];
@@ -82,6 +85,7 @@ int main(int argc, char** argv){
 
         permutate(x-2, weights[0][temp], &opt_weight_lmin, opt_path_local, opt_path_lmin);
 
+        //merge with global results
         #pragma omp critical
         if(opt_weight_lmin < opt_weight){
             opt_weight = opt_weight_lmin;
