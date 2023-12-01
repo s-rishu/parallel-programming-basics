@@ -32,7 +32,7 @@ void permutate(int height, int opt_weight_local, int *opt_path_local){
         temp = opt_path_local[i];
         opt_path_local[i] = opt_path_local[height -1];
         opt_path_local[height -1] = temp;
-     }
+    }
 }
 
 int main(int argc, char** argv){
@@ -47,21 +47,23 @@ int main(int argc, char** argv){
     size_t count;
     char *line = malloc(100);
     char* token;
+    char* start;
     int i;
     int j;
     input = fopen(input_file_path, "r");
     for(i = 0; i<x; i++) {
         getline(&line, &count, input);
+        start = line;
         for (j = 0; j < x; j++) {
-                weights[i][j] = strtol(line, &token, 10);
-                line = token;
+                weights[i][j] = strtol(start, &token, 10);
+                start = token;
         }
     }
 
     //find optimal path and weight sum
 
     #pragma omp parallel for num_threads(t)
-    for(i = 0; i < x; i++) {
+    for(int i = 0; i < x; i++) {
         int opt_path_local[12];
         //initialize opt_path_local
         for(int k = 0; k <x; k++){
@@ -69,11 +71,13 @@ int main(int argc, char** argv){
         }
         permutate(x-1, 0, opt_path_local);
     }
+
     // print result
     printf("Best path: ");
     for(int k = 0; k < x; k++){
          printf("%d ", opt_path[x-k-1]);
     }
     printf("\nDistance: %d\n", opt_weight);
+    
     return 0;
 }
