@@ -7,7 +7,7 @@ int opt_weight = INT_MAX;
 int opt_path[12];
 int weights[12][12];
 
-void permutate(int height, int opt_weight_local, int *opt_path_local){
+void permutate(int height, int opt_weight_local, int opt_path_local[]){
      if(height == 0){ //end of a single permutation
         #pragma omp critical
         if(opt_weight_local < opt_weight){
@@ -45,7 +45,7 @@ int main(int argc, char** argv){
     //read input
     FILE *input;
     size_t count;
-    char *line = malloc(100);
+    char *line = malloc(200);
     char* token;
     char* start;
     int i;
@@ -78,6 +78,6 @@ int main(int argc, char** argv){
          printf("%d ", opt_path[x-k-1]);
     }
     printf("\nDistance: %d\n", opt_weight);
-    
+
     return 0;
 }
