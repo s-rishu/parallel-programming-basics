@@ -60,6 +60,8 @@ int main(int argc, char** argv){
         }
     }
 
+    free(line);
+    
     //find optimal path and weight sum
 
     #pragma omp parallel for num_threads(t)
