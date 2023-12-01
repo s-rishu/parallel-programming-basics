@@ -45,7 +45,7 @@ int main(int argc, char** argv){
     //read input
     FILE *input;
     size_t count;
-    char *line = malloc(200);
+    char *line = malloc(100);
     char* token;
     char* start;
     int i;
@@ -63,7 +63,7 @@ int main(int argc, char** argv){
     //find optimal path and weight sum
 
     #pragma omp parallel for num_threads(t)
-    for(int i = 0; i < x; i++) {
+    for(i = 0; i < x; i++) {
         int opt_path_local[12];
         //initialize opt_path_local
         for(int k = 0; k <x; k++){
