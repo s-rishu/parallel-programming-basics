@@ -66,13 +66,17 @@ int main(int argc, char** argv){
     //find optimal path and weight sum
 
     #pragma omp parallel for num_threads(t)
-    for(i = 0; i < x; i++) {
+    for(i = 0; i < x-1; i++) {
         int opt_path_local[12];
         //initialize opt_path_local
         for(int k = 0; k <x; k++){
                 opt_path_local[x-k-1]  = k;
-        }
-        permutate(x-1, 0, opt_path_local);
+        }       
+        //swap x-2th element and ith element
+        int temp = opt_path_local[i];
+        opt_path_local[i] = opt_path_local[x - 2];
+        opt_path_local[x - 2] = temp;
+        permutate(x-2, weights[0][temp], opt_path_local);
     }
 
     // print result
