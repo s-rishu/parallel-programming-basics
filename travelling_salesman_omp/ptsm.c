@@ -6,13 +6,14 @@
 int opt_weight = INT_MAX;
 int opt_path[12];
 int weights[12][12];
+int x = 0;
 
 void permutate(int height, int opt_weight_local, int opt_path_local[]){
      if(height == 0){ //end of a single permutation
         #pragma omp critical
         if(opt_weight_local < opt_weight){
             opt_weight = opt_weight_local;
-            for(int k = 0; k < 12; k++){
+            for(int k = 0; k < x; k++){
                 opt_path[k] = opt_path_local[k];
             }
         }
@@ -38,7 +39,7 @@ void permutate(int height, int opt_weight_local, int opt_path_local[]){
 int main(int argc, char** argv){
 
     //get input arguments
-    int x = atoi(argv[1]);
+    x = atoi(argv[1]);
     int t = atoi(argv[2]);
     char* input_file_path = argv[3];
 
@@ -61,7 +62,7 @@ int main(int argc, char** argv){
     }
 
     free(line);
-    
+
     //find optimal path and weight sum
 
     #pragma omp parallel for num_threads(t)
