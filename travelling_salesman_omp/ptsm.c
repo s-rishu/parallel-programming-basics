@@ -9,6 +9,7 @@ int weights[12][12];
 
 void permutate(int height, int opt_weight_local, int *opt_path_local){
      if(height == 0){ //end of a single permutation
+        #pragma omp critical
         if(opt_weight_local < opt_weight){
             opt_weight = opt_weight_local;
             for(int k = 0; k < 12; k++){
@@ -58,21 +59,21 @@ int main(int argc, char** argv){
     }
 
     //find optimal path and weight sum
-    int height = x;
-    int temp;
+
+    #pragma omp parallel for num_threads(t)
     for(i = 0; i < height; i++) {
         int opt_path_local[12];
         //initialize opt_path_local
         for(int k = 0; k <x; k++){
                 opt_path_local[x-k-1]  = k;
         }
-        permutate(height-1, 0, opt_path_local);
+        permutate(x-1, 0, opt_path_local);
     }
     // print result
     printf("Best path: ");
     for(int k = 0; k < x; k++){
          printf("%d ", opt_path[x-k-1]);
     }
-    printf("\nDistance: %d", opt_weight);
+    printf("\nDistance: %d\n", opt_weight);
     return 0;
 }
